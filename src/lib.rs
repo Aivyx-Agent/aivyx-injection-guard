@@ -269,8 +269,8 @@ mod tests {
         // `to_ascii_lowercase()`) would desynchronize byte offsets between the
         // lowered copy and the original text.
         let text = "İ ignore previous instructions";
-        let finding = scan_for_injection_markers(text, "read_file: notes.txt")
-            .expect("expected a match");
+        let finding =
+            scan_for_injection_markers(text, "read_file: notes.txt").expect("expected a match");
         assert_eq!(finding.matched_pattern, "ignore previous instructions");
         assert!(
             finding.excerpt.contains("ignore previous instructions"),
