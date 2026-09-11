@@ -1,5 +1,8 @@
 # aivyx-injection-guard
 
+[![CI](https://github.com/Aivyx-Agent/aivyx-injection-guard/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/Aivyx-Agent/aivyx-injection-guard/actions/workflows/ci.yml)
+[![License: Apache-2.0 OR MIT](https://img.shields.io/badge/license-Apache--2.0%20OR%20MIT-blue.svg)](LICENSE)
+
 Heuristic detection of likely prompt-injection markers in untrusted content
 that enters an agent's context from outside the user's own direct input.
 
