@@ -34,22 +34,33 @@ alternate-backend concept: one scan function, one marker list, one shared
 taint type.
 
 - `INJECTION_MARKERS` — the fixed, deliberately-non-exhaustive phrase list.
-  Every entry must be lowercase ASCII (the scan lowercases with
-  `to_ascii_lowercase()`, not `to_lowercase()`, to keep byte offsets stable
-  across full Unicode case-folding edge cases — see
+  Every entry must be lowercase ASCII (the scan lowercases the normalized
+  haystack with `to_ascii_lowercase()`, not `to_lowercase()`, to keep byte
+  offsets stable across full Unicode case-folding edge cases — see
   `scan_keeps_correct_byte_offsets_when_lowercasing_changes_length`'s test
-  for why that distinction matters).
-- `scan_for_injection_markers` — case-insensitive substring match within a
-  bounded `SCAN_WINDOW_BYTES` (64KB) window, returning the first match by
-  position *in the marker list*, not by position in the text.
+  for why that distinction matters). A few entries are deliberately longer
+  than the "obvious" short form (`"you are now dan"`, not `"you are now"`)
+  because the short form matched common benign text — see the doc comment
+  on the constant for the specific false positives this was fixing.
+- `normalize_for_matching` — runs before matching: collapses runs of
+  Unicode whitespace (plus literal `\n`/`\t` escapes) to a single space and
+  drops zero-width/format characters, returning the normalized text plus a
+  byte-offset map back to the original text (so a match's excerpt is sliced
+  from what was actually there, not the normalized copy).
+- `scan_for_injection_markers` — case-insensitive substring match over the
+  *whole* input (no size cap — an earlier 64KB window was a trivial
+  pad-then-inject bypass), returning the first match by position *in the
+  marker list*, not by position in the text.
 - `InjectionFinding` — what tripped it (`matched_pattern`), where from
   (`source`, a caller-supplied human-readable label), and a bounded excerpt
-  for a human to judge at a glance.
+  (control characters other than `\n`/`\r`/`\t` stripped) for a human to
+  judge at a glance.
 - `InjectionTaint` — an `Arc<Mutex<Option<InjectionFinding>>>` wrapper,
-  first-finding-wins. Not required to use this crate's detection — a
-  consumer can call `scan_for_injection_markers` directly and build its own
-  response, the way `aivyx` does (converting a match directly into an
-  existing turn-outcome type rather than persisting a taint flag).
+  first-finding-wins, recovering from a poisoned mutex rather than
+  panicking. Not required to use this crate's detection — a consumer can
+  call `scan_for_injection_markers` directly and build its own response,
+  the way `aivyx` does (converting a match directly into an existing
+  turn-outcome type rather than persisting a taint flag).
 
 ## Where to look next
 
