@@ -12,8 +12,9 @@ fixed, deliberately-non-exhaustive set of known injection phrasings
 whole input (no size cap), returning a bounded excerpt around any match.
 Before matching, the input is normalized: runs of Unicode whitespace (plus
 literal `\n`/`\t` escapes, so JSON-serialized content normalizes the same
-as its unescaped form) collapse to a single space, and zero-width/format
-characters are dropped, and fullwidth forms and the Cyrillic/Greek letters
+as its unescaped form) collapse to a single space, zero-width/format
+characters (including the invisible Unicode tag characters and variation
+selectors) are dropped, and fullwidth forms and the Cyrillic/Greek letters
 that look like Latin ones are read as those Latin letters — so a marker
 split by a line wrap, an extra space or a hidden zero-width character, or
 spelled with a lookalike (`ignоre` with a Cyrillic о), is still caught. The excerpt is always
