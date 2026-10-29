@@ -35,3 +35,12 @@ maintaining its own copy — same rationale, and the same pattern, as
 
 See `docs/superpowers/specs/2026-09-05-injection-guard-design.md` in the
 `aivyx` repo for the full design rationale.
+
+## Known limitations
+
+A phrase-list tripwire, not a filter. Still not folded: HTML character
+references (`ignore&#32;previous`), which would need an entity decoder and a
+policy on which text is HTML; and any spelling that needs real Unicode
+normalisation tables (the crate has no dependencies, so combining marks,
+mathematical alphanumerics and lookalike letters are handled from curated
+ranges and lists).
